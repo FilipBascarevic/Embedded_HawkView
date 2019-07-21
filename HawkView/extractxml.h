@@ -8,6 +8,9 @@
 
 
 struct target_info {
+
+    Q_GADGET
+public:
     // ID of target
     QString ID;
     // Target type
@@ -35,7 +38,14 @@ struct target_info {
     //Update Time
     QString UpdateTime;
 
+    Q_PROPERTY(QString ID MEMBER ID)
+    Q_PROPERTY(QString Classification MEMBER Classification)
+    Q_PROPERTY(double Longitude MEMBER Longitude)
+    Q_PROPERTY(double Latitude MEMBER Latitude)
+
 };
+
+Q_DECLARE_METATYPE(target_info);
 
 struct Node {
 
@@ -65,14 +75,24 @@ public:
         return m_path;
     }
 
+    Q_PROPERTY(target_info currTarget READ getTarget WRITE setTarget NOTIFY readTarget)
+
 public:
     Q_SLOT void onDeviceStatusReceived(const MessageReceivedEventArgs &curr_XML);
     Q_SLOT void onDeviceDetectionReceived(const MessageReceivedEventArgs &curr_XML);
+
+    target_info getTarget() {
+        return curr_target;
+    }
+    void setTarget(target_info &arg) {
+        curr_target = arg;
+    }
 
 signals:
     void newPosition();
     void pathChanged();
     void clearTrajectory();
+    void readTarget();
 
  public:
     double longitude;

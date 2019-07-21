@@ -163,15 +163,16 @@ Q_SLOT void extractXML::onDeviceDetectionReceived(const MessageReceivedEventArgs
     if (ReportMode == "Update") {
         // Add this identified target to matrix
         addTargetToMatrix(curr_target);
+        emit readTarget();
     }
     else if (ReportMode == "Delete") {
         removeTargetFromMatrix(curr_target);
+        emit clearTrajectory();
     }
     else {
 
     }
 
-    emit clearTrajectory();
 
     // extract path of first row
     struct Node *curr = head, *temp = head;

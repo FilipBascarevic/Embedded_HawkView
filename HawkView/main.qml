@@ -41,39 +41,44 @@ Window {
 
         activeMapType: supportedMapTypes[4]
 
-        MapParameter {
-            id: source;
-            type: "source"
+        //MapParameter {
+        //    id: source;
+        //    type: "source"
 
-            property var name: "routeSource"
-            property var sourceType: "geojson"
-            property var data: '{ "type": "FeatureCollection", "features": \
-            [{ "type": "Feature", "properties": {}, "geometry": { \
-            "type": "LineString", "coordinates": [[ 20.4389216, \
-            44.776568 ], [ 20.4589216, 44.796568 ]]}}]}'
-        }
+        //    property var name: "routeSource"
+        //    property var sourceType: "geojson"
+        //    property var data: '{ "type": "FeatureCollection", "features": \
+        //    [{ "type": "Feature", "properties": {}, "geometry": { \
+        //    "type": "LineString", "coordinates": [[ 20.4389216, \
+        //    44.776568 ], [ 20.4589216, 44.796568 ]]}}]}'
+        //}
 
         Connections {
             target: extractedXML
 
-            function deleteTargets()
+            function deleteTarget(pos)
             {
-                var count = map.mapItems.length
-                for (var i = 0; i<count; i++){
-                    map.removeMapItem(map.mapItems[i])
-                    map.mapItems[i].destroy()
-                }
-                map.mapItems = []
+
+                map.removeMapItem(map.mapItems[pos])
+                map.mapItems[pos].destroy()
+
             }
 
             function addTarget()
             {
                 var count = map.mapItems.length
                 var component = Qt.createComponent("Target.qml")
-                if (component.status == Component.Ready) {
+                if (component.status === Component.Ready) {
                     var object = component.createObject(map)
                     if(object !== null) {
-                        object.path = extractedXML.path();
+                        object.objectName = extractedXML.currTarget.ID;
+                        object.addCoordinate(QtPositioning.coordinate(extractedXML.currTarget.Latitude, extractedXML.currTarget.Longitude));
+                        if (extractedXML.currTarget.Classification == 'Aircraft')
+                            object.line.color = 'lightgreen'
+                        else if (extractedXML.currTarget.Classification == 'Other')
+                            object.line.color = 'black'
+                        else if (extractedXML.currTarget.Classification == 'Vehicle')
+                            object.line.color = 'orange'
                     }
                     map.addMapItem(object)
                     //update list of items
@@ -96,12 +101,49 @@ Window {
             }
 
             onClearTrajectory: {
-                deleteTargets()
+                var count = map.mapItems.length
+
+                for (var i = 0; i < count; i++ ) {
+                    if (map.mapItems[i].objectName == extractedXML.currTarget.ID) {
+                        deleteTarget(i)
+                        console.log("Trajectory Cleared!!!")
+                    }
+                }
+
             }
 
-            onPathChanged: {
-                addTarget()
+            onReadTarget: {
+                // compare ID from Target Objects with received XML
+                var count = map.mapItems.length
+                var found = 0
+                var idx = 0
+                for (var i = 0; i < count; i++ ) {
+                    if (map.mapItems[i].objectName == extractedXML.currTarget.ID) {
+                        found = 1
+                        idx = i
+                        //console.log(extractedXML.currTarget.ID)
+                        break
+                    }
+                }
+                // ID is not in a table, create new component
+                if (found == 0) {
+                    addTarget()
+                }
+                // ID is found, update elements
+                else {
+                    //console.log(map.mapItems[idx].path.length);
+                    map.mapItems[idx].addCoordinate(QtPositioning.coordinate(extractedXML.currTarget.Latitude, extractedXML.currTarget.Longitude));
+                    //map.addMapItem(mapItems[idx]);
+                }
             }
+
+            //onClearTrajectory: {
+            //    deleteTargets()
+            //}
+
+            //onPathChanged: {
+            //    addTarget()
+            //}
         }
 
         MapQuickItem {
