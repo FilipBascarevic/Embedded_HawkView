@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QIcon>
+#include <QQmlComponent>
 #include "xmlcomm.h"
 #include "extractxml.h"
 
@@ -17,6 +18,8 @@ int main(int argc, char *argv[])
     // thread for receiving new XML
     Thread receiveThread;
 
+    qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
+
     XMLComm comm(4444);
     extractXML extr;
     // Add XMLComm class in new thread
@@ -24,10 +27,17 @@ int main(int argc, char *argv[])
     comm.moveToThread(&receiveThread);
     // Connect reception of XML and it extracting
     QObject::connect(&comm, &XMLComm::DeviceStatusReceived, &extr, &extractXML::onDeviceStatusReceived);
+    QObject::connect(&comm, &XMLComm::DeviceDetectionReceived, &extr, &extractXML::onDeviceDetectionReceived);
 
     app.setWindowIcon(QIcon(":hawk.png"));
 
     QQmlApplicationEngine engine;
+
+    //QQmlComponent component(&engine, QUrl::fromLocalFile("Target.qml"));
+    //QObject *object = component.create();
+    //object->setProperty("path", extr.m_path);
+    //object->setProperty("line.colour", "green");
+
     // send a pointer to QML
     engine.rootContext()->setContextProperty("extractedXML", &extr);
     const QUrl url(QStringLiteral("qrc:/main.qml"));

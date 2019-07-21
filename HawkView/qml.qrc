@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>hawk.png</file>
         <file>position.png</file>
+        <file>location.png</file>
+        <file>Target.qml</file>
     </qresource>
 </RCC>

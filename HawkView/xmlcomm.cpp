@@ -103,45 +103,45 @@ Q_SLOT void XMLComm::readData()
             // DeviceStatusReport
             if (rootNode == "DeviceStatusReport") {
                 emit DeviceStatusReceived(args);
-                //qDebug() << "DeviceStatusReport";
+                qDebug() << "DeviceStatusReport";
             }
             // DeviceConfiguration
             else if (rootNode == "DeviceConfiguration") {
                 emit DeviceConfigurationReceived(args);
-                //qDebug() << "DeviceConfiguration";
+                qDebug() << "DeviceConfiguration";
             }
             // DeviceDetectionReport
             else if (rootNode == "DeviceDetectionReport") {
                 emit DeviceDetectionReceived(args);
-                //qDebug() << "DeviceDetectionReport";
+                qDebug() << "DeviceDetectionReport";
             }
             else if (rootNode == "CommandMessage") {
                emit CommandMsgReceived(args);
-               //qDebug() << "CommandMessage";
+               qDebug() << "CommandMessage";
             }
             else if (rootNode == "DeviceInitialization") {
                emit DeviceInitializationMsgReceived(args);
-               //qDebug() << "DeviceInitialization";
+               qDebug() << "DeviceInitialization";
             }
             else if (rootNode == "GeometryReport") {
                emit GeometryReportMsgReceived(args);
-               //qDebug() << "GeometryReport";
+               qDebug() << "GeometryReport";
             }
             else if (rootNode == "PlatformDetectionReport") {
                emit PlatformDetectionReportMsgReceived(args);
-               //qDebug() << "PlatformDetectionReport";
+               qDebug() << "PlatformDetectionReport";
             }
             else if (rootNode == "PlatformStatusReport") {
                emit PlatformStatusReportMsgReceived(args);
-               //qDebug() << "PlatformStatusReport";
+               qDebug() << "PlatformStatusReport";
             }
             else if (rootNode == "SubscriptionConfiguration") {
                emit SubscriptionConfigurationMsgReceived(args);
-               //qDebug() << "SubscriptionConfiguration";
+               qDebug() << "SubscriptionConfiguration";
             }
             else if (rootNode == "TrackReport") {
                emit TrackReportMsgReceived(args);
-               //qDebug() << "TrackReport";
+               qDebug() << "TrackReport";
             }
 
         }
@@ -150,7 +150,7 @@ Q_SLOT void XMLComm::readData()
         {
             MessageReceivedEventArgs args(currXML, "", "");
             emit InvalidMsgReceived(args);
-            //qDebug() << "InvalidMsgReceived";
+            qDebug() << "InvalidMsgReceived";
         }
 
         // remove current XML from buffer
