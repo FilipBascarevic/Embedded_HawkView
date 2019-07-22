@@ -18,6 +18,7 @@ Window {
     Map {
 
         property variant mapItems
+        property variant mapItemIcons
 
         id : map
         anchors.fill: parent
@@ -60,7 +61,9 @@ Window {
             {
 
                 map.removeMapItem(map.mapItems[pos])
+                map.removeMapItem(map.mapItemIcons[pos])
                 map.mapItems[pos].destroy()
+                map.mapItemIcons[pos].destroy()
 
             }
 
@@ -79,6 +82,8 @@ Window {
                             object.line.color = 'black'
                         else if (extractedXML.currTarget.Classification == 'Vehicle')
                             object.line.color = 'orange'
+                        else if (extractedXML.currTarget.Classification == 'Personal')
+                            object.line.color = 'blue'
                     }
                     map.addMapItem(object)
                     //update list of items
@@ -88,6 +93,41 @@ Window {
                     }
                     myArray.push(object)
                     map.mapItems = myArray
+
+
+                } else {
+                    console.log("Target is not supported right now, please call us later.")
+                }
+            }
+
+            function addTargetIcon()
+            {
+                var count = map.mapItemIcons.length
+                var component
+                if (extractedXML.currTarget.Classification == 'Aircraft')
+                   component = Qt.createComponent("TargetIconDrone.qml")
+                else if (extractedXML.currTarget.Classification == 'Other')
+                    component = Qt.createComponent("TargetIconOther.qml")
+                else if (extractedXML.currTarget.Classification == 'Vehicle')
+                    component = Qt.createComponent("TargetIconVehicle.qml")
+                else if (extractedXML.currTarget.Classification == 'Personal')
+                    component = Qt.createComponent("TargetIconPerson.qml")
+                else
+                    component = Qt.createComponent("TargetIconOther.qml")
+
+                if (component.status === Component.Ready) {
+                    var object = component.createObject(map)
+                    if(object !== null) {
+                        object.coordinate = QtPositioning.coordinate(extractedXML.currTarget.Latitude, extractedXML.currTarget.Longitude)
+                    }
+                    map.addMapItem(object)
+                    //update list of items
+                    var myArray = new Array()
+                    for (var i = 0; i<count; i++){
+                        myArray.push(map.mapItemIcons[i])
+                    }
+                    myArray.push(object)
+                    map.mapItemIcons = myArray
 
 
                 } else {
@@ -128,11 +168,13 @@ Window {
                 // ID is not in a table, create new component
                 if (found == 0) {
                     addTarget()
+                    addTargetIcon()
                 }
                 // ID is found, update elements
                 else {
                     //console.log(map.mapItems[idx].path.length);
                     map.mapItems[idx].addCoordinate(QtPositioning.coordinate(extractedXML.currTarget.Latitude, extractedXML.currTarget.Longitude));
+                    map.mapItemIcons[idx].coordinate = QtPositioning.coordinate(extractedXML.currTarget.Latitude, extractedXML.currTarget.Longitude);
                     //map.addMapItem(mapItems[idx]);
                 }
             }
@@ -178,6 +220,7 @@ Window {
 
         Component.onCompleted: {
             mapItems = new Array();
+            mapItemIcons = new Array();
         }
 
     }

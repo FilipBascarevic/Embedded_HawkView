@@ -5,5 +5,14 @@
         <file>position.png</file>
         <file>location.png</file>
         <file>Target.qml</file>
+        <file>Arrow.qml</file>
+        <file>TargetIconOther.qml</file>
+        <file>drone.png</file>
+        <file>car.png</file>
+        <file>other.png</file>
+        <file>TargetIconDrone.qml</file>
+        <file>TargetIconVehicle.qml</file>
+        <file>person.jpg</file>
+        <file>TargetIconPerson.qml</file>
     </qresource>
 </RCC>
